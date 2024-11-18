@@ -103,7 +103,11 @@ public class Object {
         this.deltaX[0] += getVelocity()[0] / HZ;
         this.deltaX[1] += getVelocity()[1] / HZ;
 
-        if (this.deltaX[1] <= 0 && this.groundHitInfo == null) {
+        updateGroundHitInfo(ObjectHandler.floorHeight);
+    }
+
+    public void updateGroundHitInfo(int floor) {
+        if (this.deltaX[1] <= floor && this.groundHitInfo == null) {
             this.groundHitInfo = "Ground hit at distance: " + deltaX[0];
         }
     }

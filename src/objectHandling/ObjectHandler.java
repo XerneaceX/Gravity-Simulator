@@ -11,6 +11,8 @@ public class ObjectHandler {
     public static final double GRAVITATIONAL_CONSTANT = 9.81; // N/kg
     public static final double AIR_DENSITY = 1.204; // m3/kg
 
+    public static int floorHeight;
+
     private int HZ;
     private int simTime;
     private final ArrayList<objectHandling.Object> objects = new ArrayList<>();
@@ -40,8 +42,10 @@ public class ObjectHandler {
      * If floor is set to true, when printing the results; it will also print the distance at which the object touched
      * the floor
      */
-    public void addFloor() {
+    public void addFloor(int floorHeight) {
         this.floor = true;
+        ObjectHandler.floorHeight = -floorHeight;
+
     }
 
     public void setHZ(int HZ) {
