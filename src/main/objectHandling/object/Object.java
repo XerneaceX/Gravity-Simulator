@@ -8,10 +8,12 @@ import java.text.DecimalFormat;
 import static main.objectHandling.ObjectHandler.GRAVITATIONAL_CONSTANT;
 
 public class Object {
-    private static final double DEFAULT_DRAG_COEFFICIENT = 0.0;
-    private static final double DEFAULT_SURFACE_AREA = 1;
-    private static final double[] DEFAULT_INITIAL_VELOCITY = new double[]{0, 0};
-    private static final double DEFAULT_MASS = 69;
+    public static final double DEFAULT_DRAG_COEFFICIENT = 0.0;
+    public static final double DEFAULT_SURFACE_AREA = 1;
+    public static final double[] DEFAULT_INITIAL_VELOCITY = new double[]{0, 0};
+    public static final double DEFAULT_MASS = 69;
+    public static final Shape DEFAULT_SHAPE = Shape.SQUARE;
+    public static final Position DEFAULT_POSITION = new Position(0, 0);
 
     private Position position;
 
@@ -35,15 +37,14 @@ public class Object {
      * @param initialVelocity is the velocity at which the object starts in m/s Ex: {0,10} would mean that the object
      *                        is going up by 10 m/s at the start of the simulation
      */
-    public Object(double mass, double dragCoefficient, double size, double[] initialVelocity) {
+    public Object(double mass, double dragCoefficient, double size, double[] initialVelocity, Position position) {
         setSize(size);
         setMass(mass);
         setDragCoefficient(dragCoefficient);
         setVelocity(initialVelocity);
-        setShape(Shape.SQUARE);
-        setPosition(new Position(0,0));
-        setHitBox(new HitBox((int) getSize(), getShape(), position));
-
+        setShape(DEFAULT_SHAPE);
+        setPosition(position);
+        makeHitBox();
     }
 
     /**
@@ -56,14 +57,17 @@ public class Object {
      *                        on all sides.
      */
     public Object(double mass, double dragCoefficient, double size) {
-        this(mass, dragCoefficient, size, DEFAULT_INITIAL_VELOCITY);
+        this(mass, dragCoefficient, size, DEFAULT_INITIAL_VELOCITY, DEFAULT_POSITION);
     }
 
+    public Object(double size, Position position) {
+        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, size, DEFAULT_INITIAL_VELOCITY, position);
+    }
     /**
      * Simple constructor for an object for which there's no AirDrag
      */
     public Object() {
-        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, DEFAULT_SURFACE_AREA, DEFAULT_INITIAL_VELOCITY);
+        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, DEFAULT_SURFACE_AREA, DEFAULT_INITIAL_VELOCITY, DEFAULT_POSITION);
     }
 
     public Shape getShape() {
@@ -86,8 +90,11 @@ public class Object {
         return hitBox;
     }
 
-    public void setHitBox(HitBox hitBox) {
-        this.hitBox = hitBox;
+    public void makeHitBox() {
+        switch (shape) {
+            case SQUARE -> this.hitBox = new SquareHitBox((int) getSize(), getPosition());
+            case CIRCLE -> this.hitBox = new CircleHitBox((int) getSize(), getPosition());
+        }
     }
 
     public double getMass() {
@@ -174,7 +181,6 @@ public class Object {
             // applies gravity
             accelerate(new double[]{0, (-GRAVITATIONAL_CONSTANT) / HZ});
         }
-
         applyDrag(HZ);
         updatePosition(HZ);
     }
@@ -186,5 +192,14 @@ public class Object {
         DecimalFormat df = new DecimalFormat("#.##");
         return "Velocity: \t\t" + df.format(getResultingVelocity()) + " m/s" + "\nHeight: \t\t"
                 + df.format(getHeight()) + " m" + "\ndistance: \t\t" + df.format(getPosition().getX()) + " m";
+    }
+
+    @Override
+    public String toString() {
+        return "Object{" +
+                "position=" + position +
+                ", size=" + size +
+                ", shape=" + shape +
+                '}';
     }
 }

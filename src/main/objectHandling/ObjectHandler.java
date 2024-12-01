@@ -5,7 +5,6 @@ import main.objectHandling.object.Object;
 import main.objectHandling.object.StaticObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -34,8 +33,19 @@ public class ObjectHandler {
         setHZ(HZ);
     }
 
-    public ArrayList<StaticObject> getStaticObjects() {
-        return staticObjects;
+    public StaticObject[] getStaticObjects() {
+        return staticObjects.toArray(new StaticObject[0]);
+    }
+
+    public Object[] getAllObjects() {
+        Object[] allObjects = new Object[fallingObjects.size()+staticObjects.size()];
+        for (int i = 0; i < fallingObjects.size(); i++) {
+            allObjects[i] = fallingObjects.get(i);
+        }
+        for (int i = fallingObjects.size(); i < staticObjects.size(); i++) {
+            allObjects[i] = staticObjects.get(i);
+        }
+        return allObjects;
     }
 
     /**
