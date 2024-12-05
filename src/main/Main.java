@@ -6,7 +6,7 @@ import main.objectHandling.object.StaticObject;
 
 public class Main {
     public static void main(String[] args) {
-        ObjectHandler env = new ObjectHandler(new Object[]{new Object(10,0.47,10)}, 20, 2000);
+        ObjectHandler env = new ObjectHandler(new Object[]{new Object(10,0.47,10)}, 100, 2000);
         env.addStaticObject(new StaticObject(new Position(0,-100), 10));
         env.startSimulation();
         env.printResults();

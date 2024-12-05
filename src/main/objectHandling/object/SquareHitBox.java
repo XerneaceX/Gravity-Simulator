@@ -3,12 +3,15 @@ package main.objectHandling.object;
 import main.Position;
 
 public class SquareHitBox extends HitBox {
-    public SquareHitBox(int size, Position position) {
+    public SquareHitBox(double size, Position position) {
         super(size, position);
     }
 
     @Override
     protected boolean hitBoxCollided(HitBox hitBox) {
-        return position.getY() > hitBox.getRangeY()[0] && position.getY() < hitBox.getRangeY()[1] && position.getX() > hitBox.getRangeX()[0] && position.getX() < hitBox.getRangeX()[1];
+        return (this.getRangeY(0) < hitBox.getRangeY(1) &&
+                this.getRangeY(1) > hitBox.getRangeY(1)) &&
+                this.getRangeX(1) > hitBox.getRangeX(0) &&
+                this.getRangeX(0) < hitBox.getRangeX(1);
     }
 }

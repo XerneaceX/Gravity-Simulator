@@ -1,13 +1,15 @@
 package main.objectHandling.object;
 
 import main.Position;
+import main.Vector;
 
 /**
  * Abstract class for making hitboxes.
  */
 public abstract class HitBox {
-    int size;
     Position position;
+    Vector.Direction direction;
+    double size;
     double equation;
 
     /**
@@ -15,32 +17,34 @@ public abstract class HitBox {
      * @param size is the size of the object
      * @param position is the center of the hitbox.
      */
-    protected HitBox(int size, Position position) {
+    protected HitBox(double size, Position position) {
         this.size = size;
         this.position = position;
     }
 
-    int getSize() {
+    double getSize() {
         return size;
     }
 
     /**
      * @return an array of the extremities of the hitbox in the X axis
      */
-    int[] getRangeX() {
-        return new int[]{
-                (int) (position.getX() - (double) getSize() / 2),
-                (int) (position.getX() + (double) getSize() / 2)
+    double getRangeX(int x) {
+        return switch (x) {
+            case 0 -> (position.getX() - getSize() / 2);
+            case 1 -> (position.getX() + getSize() / 2);
+            default -> throw new IllegalStateException("Unexpected value: " + x);
         };
     }
 
     /**
      * @return an array of the extremities of the hitbox in the Y axis
      */
-    int[] getRangeY() {
-        return new int[]{
-                (int) (position.getY() - (double) getSize() / 2),
-                (int) (position.getY() + (double) getSize() / 2)
+    double getRangeY(int x) {
+        return switch (x) {
+            case 0 -> (position.getY() - getSize() / 2);
+            case 1 -> (position.getY() + getSize() / 2);
+            default -> throw new IllegalStateException("Unexpected value: " + x);
         };
     }
 
@@ -50,15 +54,6 @@ public abstract class HitBox {
      * @return if the hitboxes collided
      */
     abstract boolean hitBoxCollided(HitBox hitBox);
-
-    /**
-     * Checks for collisions
-     * @param hitBox
-     * @return
-     */
-    public boolean checkForCollision(HitBox hitBox) {
-        return hitBoxCollided(hitBox);
-    }
 
     @Override
     public String toString() {

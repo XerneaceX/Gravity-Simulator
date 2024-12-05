@@ -6,9 +6,18 @@ import main.Position;
  * Not yet implemented
  */
 public class CircleHitBox extends HitBox {
-    private final int radius = size/2;
-    public CircleHitBox(int size, Position position) {
+    private double radius;
+    public CircleHitBox(double size, Position position) {
         super(size, position);
+        setRadius(getSize()/2);
+    }
+
+    double getRadius() {
+        return radius;
+    }
+
+    private void setRadius(double radius) {
+        this.radius = radius;
     }
 
     @Override

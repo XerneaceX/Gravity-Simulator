@@ -1,6 +1,7 @@
 package main.objectHandling.object;
 
 import main.Position;
+import main.Vector;
 import main.objectHandling.ObjectHandler;
 
 import java.text.DecimalFormat;
@@ -17,13 +18,14 @@ public class Object {
 
     private Position position;
 
+    private long tickDone;
     private double mass;
     private double dragCoefficient;
-    private double[] velocity;
+    private Vector velocity;
     private double size;
     private Shape shape;
     private HitBox hitBox;
-    private boolean hitFloor = false;
+    private boolean onFloor = false;
 
 
     /**
@@ -32,12 +34,12 @@ public class Object {
      * @param mass            is the mass of the object in KG
      * @param dragCoefficient is the drag coefficient of the object. We assume that the object has the same
      *                        drag coefficient on all sides
-     * @param size     is the surface area of the object. We assume that the object has the same surface area
+     * @param size            is the surface area of the object. We assume that the object has the same surface area
      *                        on all sides.
      * @param initialVelocity is the velocity at which the object starts in m/s Ex: {0,10} would mean that the object
      *                        is going up by 10 m/s at the start of the simulation
      */
-    public Object(double mass, double dragCoefficient, double size, double[] initialVelocity, Position position) {
+    public Object(double mass, double dragCoefficient, double size, Vector initialVelocity, Position position) {
         setSize(size);
         setMass(mass);
         setDragCoefficient(dragCoefficient);
@@ -53,21 +55,22 @@ public class Object {
      * @param mass            is the mass of the object in KG
      * @param dragCoefficient is the drag coefficient of the object. We assume that the object has the same
      *                        drag coefficient on all sides
-     * @param size     is the surface area of the object. We assume that the object has the same surface area
+     * @param size            is the surface area of the object. We assume that the object has the same surface area
      *                        on all sides.
      */
     public Object(double mass, double dragCoefficient, double size) {
-        this(mass, dragCoefficient, size, DEFAULT_INITIAL_VELOCITY, DEFAULT_POSITION);
+        this(mass, dragCoefficient, size, new Vector(DEFAULT_INITIAL_VELOCITY), DEFAULT_POSITION);
     }
 
     public Object(double size, Position position) {
-        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, size, DEFAULT_INITIAL_VELOCITY, position);
+        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, size, new Vector(DEFAULT_INITIAL_VELOCITY), position);
     }
+
     /**
      * Simple constructor for an object for which there's no AirDrag
      */
     public Object() {
-        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, DEFAULT_SURFACE_AREA, DEFAULT_INITIAL_VELOCITY, DEFAULT_POSITION);
+        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, DEFAULT_SURFACE_AREA, new Vector(DEFAULT_INITIAL_VELOCITY), DEFAULT_POSITION);
     }
 
     public Shape getShape() {
@@ -92,8 +95,8 @@ public class Object {
 
     public void makeHitBox() {
         switch (shape) {
-            case SQUARE -> this.hitBox = new SquareHitBox((int) getSize(), getPosition());
-            case CIRCLE -> this.hitBox = new CircleHitBox((int) getSize(), getPosition());
+            case SQUARE -> this.hitBox = new SquareHitBox(getSize(), getPosition());
+            case CIRCLE -> this.hitBox = new CircleHitBox(getSize(), getPosition());
         }
     }
 
@@ -117,11 +120,11 @@ public class Object {
         this.dragCoefficient = dragCoefficient;
     }
 
-    public double[] getVelocity() {
+    public Vector getVelocity() {
         return this.velocity;
     }
 
-    public void setVelocity(double[] velocity) {
+    public void setVelocity(Vector velocity) {
         this.velocity = velocity;
     }
 
@@ -133,24 +136,35 @@ public class Object {
         this.size = size;
     }
 
-    public void accelerate(double[] acceleration) {
-        this.velocity[0] += acceleration[0];
-        this.velocity[1] += acceleration[1];
+    public long getTick() {
+        return tickDone;
+    }
+
+    public void incrementTick() {
+        this.tickDone++;
+    }
+
+    public void accelerate(Vector acceleration) {
+        velocity.incrementX(acceleration.getX());
+        velocity.incrementY(acceleration.getY());
     }
 
     public void updatePosition(int HZ) {
-        this.position.incrementX(getVelocity()[0] / HZ);
-        this.position.incrementY(getVelocity()[1] / HZ);
+        position.incrementX(velocity.getX() / HZ);
+        position.incrementY(velocity.getY() / HZ);
     }
 
     /**
      * Applies drag force to itself
+     *
      * @param HZ is How many times to calculate it by second
      */
     public void applyDrag(int HZ) {
-        double[] drag = new double[2];
-        drag[0] = ((0.5 * ObjectHandler.AIR_DENSITY * Math.pow(this.getVelocity()[0], 2) * this.getDragCoefficient() * this.getSize()) / HZ) / this.getMass();
-        drag[1] = ((0.5 * ObjectHandler.AIR_DENSITY * Math.pow(this.getVelocity()[1], 2) * this.getDragCoefficient() * this.getSize()) / HZ) / this.getMass();
+        Vector drag;
+        drag = new Vector(
+                ((0.5 * ObjectHandler.AIR_DENSITY * Math.pow(velocity.getX(), 2) * this.getDragCoefficient() * this.getSize()) / HZ) / this.getMass(),
+                ((0.5 * ObjectHandler.AIR_DENSITY * Math.pow(velocity.getY(), 2) * this.getDragCoefficient() * this.getSize()) / HZ) / this.getMass()
+        );
         this.accelerate(drag);
     }
 
@@ -158,31 +172,35 @@ public class Object {
      * @return the norm of the resulting velocity vector
      */
     public double getResultingVelocity() {
-        return (Math.sqrt(Math.pow(this.velocity[0], 2) + Math.pow(this.velocity[1], 2)));
+        return (Math.sqrt(Math.pow(velocity.getX(), 2) + Math.pow(velocity.getY(), 2)));
     }
 
     public void doPhysicsTick(int HZ, StaticObject[] staticObjects) {
         moveAndSlide(HZ, staticObjects);
+        incrementTick();
     }
 
     public void moveAndSlide(int HZ, StaticObject[] staticObjects) {
-        if (!hitFloor) {
+        if (!onFloor && tickDone % 10 == 0) {
             for (StaticObject staticObject : staticObjects) {
-                if (hitBox.checkForCollision(staticObject.getHitBox())) {
-                    this.velocity[0] = 0;
-                    this.velocity[1] = 0;
-                    hitFloor = true;
-                    System.out.println("collision detected at : " + getPosition());
+                if (hitBox.hitBoxCollided(staticObject.getHitBox())) {
+                    doCollision();
                 }
             }
         }
 
-        if (!hitFloor) {
+        if (!onFloor) {
             // applies gravity
-            accelerate(new double[]{0, (-GRAVITATIONAL_CONSTANT) / HZ});
+            accelerate(new Vector(0, (-GRAVITATIONAL_CONSTANT) / HZ));
         }
         applyDrag(HZ);
         updatePosition(HZ);
+    }
+
+    private void doCollision() {
+        velocity.reset();
+        this.onFloor = true;
+        System.out.println("collision detected at : " + getPosition());
     }
 
     /**
