@@ -1,10 +1,12 @@
 package main.objectHandling.object;
 
+import utils.Grid;
 import utils.PositionVector;
 import utils.Vector;
 import main.objectHandling.ObjectHandler;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 import static main.objectHandling.ObjectHandler.GRAVITATIONAL_CONSTANT;
 
@@ -17,6 +19,7 @@ public class Object {
     public static final double DEFAULT_MASS = 69;
 
     private PositionVector positionVector;
+    private PositionVector positionInGrid = new PositionVector(1000, 1000);
 
     private boolean onFloor = false;
     private double dragCoefficient;
@@ -140,6 +143,14 @@ public class Object {
         return tickDone;
     }
 
+    public PositionVector getPositionInGrid() {
+        return positionInGrid;
+    }
+
+    public void setPositionInGrid(PositionVector positionInGrid) {
+        this.positionInGrid = positionInGrid;
+    }
+
     public void incrementTick() {
         this.tickDone++;
     }
@@ -175,22 +186,20 @@ public class Object {
         return (Math.sqrt(Math.pow(velocity.getX(), 2) + Math.pow(velocity.getY(), 2)));
     }
 
-    public void doPhysicsTick(int HZ, StaticObject[] staticObjects) {
-        moveAndSlide(HZ, staticObjects);
+    public void doPhysicsTick(int HZ, Object[] objectsNear) {
+        moveAndSlide(HZ, objectsNear);
         incrementTick();
     }
 
-    public void moveAndSlide(int HZ, StaticObject[] staticObjects) {
+    public void moveAndSlide(int HZ, Object[] objectsNear) {
         if (!onFloor && tickDone % 10 == 0) {
-            for (StaticObject staticObject : staticObjects) {
-                if (hitBox.hitBoxCollided(staticObject.getHitBox())) {
+            for (Object obj : objectsNear) {
+                if (hitBox.hitBoxCollided(obj.getHitBox())) {
                     doCollision();
                 }
             }
         }
-
         if (!onFloor) {
-            // applies gravity
             accelerate(new Vector(0, (-GRAVITATIONAL_CONSTANT) / HZ));
         }
         applyDrag(HZ);

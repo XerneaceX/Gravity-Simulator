@@ -21,7 +21,7 @@ public class ObjectHandler {
     public boolean simIsON = false;
     private final ArrayList<main.objectHandling.object.Object> fallingObjects = new ArrayList<>();
     private final ArrayList<main.objectHandling.object.StaticObject> staticObjects = new ArrayList<>();
-    private Grid grid = new Grid();
+    private final Grid grid = new Grid();
     /**
      * Constructs the object handler.
      * @param fallingObjects are the objects that will be handled by the simulation
@@ -55,10 +55,18 @@ public class ObjectHandler {
      */
     public void addFallingObject(main.objectHandling.object.Object[] objects) {
         Collections.addAll(this.fallingObjects, objects);
+        for (Object object : objects) {
+            grid.addObject(object);
+            System.out.println("added new falling object. Position in grid = " + object.getPositionInGrid());
+        }
     }
 
     public void addStaticObject(main.objectHandling.object.StaticObject staticObject) {
         Collections.addAll(this.staticObjects, staticObject);
+        for (Object object : staticObjects) {
+            grid.addObject(object);
+            System.out.println("added new falling object. Position in grid = " + object.getPositionInGrid());
+        }
     }
 
     public void setHZ(int HZ) {
@@ -69,15 +77,23 @@ public class ObjectHandler {
         this.simTime = simTime;
     }
 
+//    public void log() {
+//
+//    }
+//
+//    public int[] collectSimulationData() {
+//
+//    }
+
     /**
      * Starts all the calculation necessary for the simulation
-     * Time is calculated in ticks. At every tick, a new calculation happens.
+     * Time is calculated in ticks            accelerate(new Vector(0, (-GRAVITATIONAL_CONSTANT) / HZ));. At every tick, a new calculation happens.
      * The simulation will stop when the simTime (seconds) is over.
      */
     public void startSimulation() {
         simIsON = true;
         for (int ticks = 0; ticks < this.simTime * this.HZ; ticks++) {
-            updateObjects();
+            updateObjects(ticks);
         }
         simIsON = false;
     }
@@ -99,13 +115,17 @@ public class ObjectHandler {
     }
 
     /**
-     * Applies all natural forces on all objects
+     * Applies all natural forces on all objects (_process_tick)
      */
-    private void updateObjects() {
-        StaticObject[] staticObjects = new StaticObject[this.staticObjects.size()];
-        staticObjects = this.staticObjects.toArray(staticObjects);
-        for (main.objectHandling.object.Object object : this.fallingObjects) {
-            object.doPhysicsTick(this.HZ, staticObjects);
+    private void updateObjects(int ticks) {
+        for (Object object : this.fallingObjects) {
+            Object[] objectsNear = Grid.asSimpleArray(grid.getAdjacentObjects(object));
+            object.doPhysicsTick(this.HZ, objectsNear);
+            if (ticks % HZ == 0) {
+                if (grid.updateGridPos(object)) {
+                    grid.moveInGrid(object);
+                }
+            }
         }
     }
 
