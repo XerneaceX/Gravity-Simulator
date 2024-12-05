@@ -1,6 +1,7 @@
 package main.objectHandling;
 
-import main.Position;
+import utils.Grid;
+import utils.PositionVector;
 import main.objectHandling.object.Object;
 import main.objectHandling.object.StaticObject;
 
@@ -20,7 +21,7 @@ public class ObjectHandler {
     public boolean simIsON = false;
     private final ArrayList<main.objectHandling.object.Object> fallingObjects = new ArrayList<>();
     private final ArrayList<main.objectHandling.object.StaticObject> staticObjects = new ArrayList<>();
-
+    private Grid grid = new Grid();
     /**
      * Constructs the object handler.
      * @param fallingObjects are the objects that will be handled by the simulation
@@ -85,12 +86,12 @@ public class ObjectHandler {
      * Is supposed to be accessed in thread
      * @return the position of all objects
      */
-    public Position[] getAllPositions() {
-        Position[] positions = new Position[this.fallingObjects.size()];
+    public PositionVector[] getAllPositions() {
+        PositionVector[] positionVectors = new PositionVector[this.fallingObjects.size()];
         for (int i = 0; i < fallingObjects.size(); i++) {
-            positions[i] = fallingObjects.get(i).getPosition();
+            positionVectors[i] = fallingObjects.get(i).getPosition();
         }
-        return positions;
+        return positionVectors;
     }
 
     public Object[] getFallingObjects() {

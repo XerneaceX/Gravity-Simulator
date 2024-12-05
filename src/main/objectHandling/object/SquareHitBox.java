@@ -1,10 +1,10 @@
 package main.objectHandling.object;
 
-import main.Position;
+import utils.PositionVector;
 
 public class SquareHitBox extends HitBox {
-    public SquareHitBox(double size, Position position) {
-        super(size, position);
+    public SquareHitBox(double size, PositionVector positionVector) {
+        super(size, positionVector);
     }
 
     @Override

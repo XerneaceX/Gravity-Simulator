@@ -1,10 +1,10 @@
-package main;
+package utils;
 
-public class Position {
+public class PositionVector {
     private double x;
     private double y;
 
-    public Position(int x, int y) {
+    public PositionVector(int x, int y) {
         setX(x);
         setY(y);
     }

@@ -1,9 +1,9 @@
 package main.objectHandling.object;
 
-import main.Position;
+import utils.PositionVector;
 
 public class StaticObject extends main.objectHandling.object.Object {
-    public StaticObject(Position position, int size) {
-        super(size, position);
+    public StaticObject(PositionVector positionVector, int size) {
+        super(size, positionVector);
     }
 }

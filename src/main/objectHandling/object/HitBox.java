@@ -1,13 +1,13 @@
 package main.objectHandling.object;
 
-import main.Position;
-import main.Vector;
+import utils.PositionVector;
+import utils.Vector;
 
 /**
  * Abstract class for making hitboxes.
  */
 public abstract class HitBox {
-    Position position;
+    PositionVector positionVector;
     Vector.Direction direction;
     double size;
     double equation;
@@ -15,11 +15,11 @@ public abstract class HitBox {
     /**
      * Constructs a hitbox of the desired size and takes the position of the object
      * @param size is the size of the object
-     * @param position is the center of the hitbox.
+     * @param positionVector is the center of the hitbox.
      */
-    protected HitBox(double size, Position position) {
+    protected HitBox(double size, PositionVector positionVector) {
         this.size = size;
-        this.position = position;
+        this.positionVector = positionVector;
     }
 
     double getSize() {
@@ -31,8 +31,8 @@ public abstract class HitBox {
      */
     double getRangeX(int x) {
         return switch (x) {
-            case 0 -> (position.getX() - getSize() / 2);
-            case 1 -> (position.getX() + getSize() / 2);
+            case 0 -> (positionVector.getX() - getSize() / 2);
+            case 1 -> (positionVector.getX() + getSize() / 2);
             default -> throw new IllegalStateException("Unexpected value: " + x);
         };
     }
@@ -42,8 +42,8 @@ public abstract class HitBox {
      */
     double getRangeY(int x) {
         return switch (x) {
-            case 0 -> (position.getY() - getSize() / 2);
-            case 1 -> (position.getY() + getSize() / 2);
+            case 0 -> (positionVector.getY() - getSize() / 2);
+            case 1 -> (positionVector.getY() + getSize() / 2);
             default -> throw new IllegalStateException("Unexpected value: " + x);
         };
     }
@@ -59,7 +59,7 @@ public abstract class HitBox {
     public String toString() {
         return "HitBox{" +
                 "size=" + size +
-                ", position=" + position +
+                ", position=" + positionVector +
                 ", equation=" + equation +
                 '}';
     }

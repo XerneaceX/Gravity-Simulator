@@ -1,7 +1,7 @@
 package main.objectHandling.object;
 
-import main.Position;
-import main.Vector;
+import utils.PositionVector;
+import utils.Vector;
 import main.objectHandling.ObjectHandler;
 
 import java.text.DecimalFormat;
@@ -9,23 +9,23 @@ import java.text.DecimalFormat;
 import static main.objectHandling.ObjectHandler.GRAVITATIONAL_CONSTANT;
 
 public class Object {
-    public static final double DEFAULT_DRAG_COEFFICIENT = 0.0;
-    public static final double DEFAULT_SURFACE_AREA = 1;
+    public static final PositionVector DEFAULT_POSITION_VECTOR = new PositionVector(0, 0);
     public static final double[] DEFAULT_INITIAL_VELOCITY = new double[]{0, 0};
-    public static final double DEFAULT_MASS = 69;
+    public static final double DEFAULT_DRAG_COEFFICIENT = 0.0;
     public static final Shape DEFAULT_SHAPE = Shape.SQUARE;
-    public static final Position DEFAULT_POSITION = new Position(0, 0);
+    public static final double DEFAULT_SURFACE_AREA = 1;
+    public static final double DEFAULT_MASS = 69;
 
-    private Position position;
+    private PositionVector positionVector;
 
-    private long tickDone;
-    private double mass;
+    private boolean onFloor = false;
     private double dragCoefficient;
     private Vector velocity;
+    private long tickDone;
+    private HitBox hitBox;
+    private double mass;
     private double size;
     private Shape shape;
-    private HitBox hitBox;
-    private boolean onFloor = false;
 
 
     /**
@@ -39,13 +39,13 @@ public class Object {
      * @param initialVelocity is the velocity at which the object starts in m/s Ex: {0,10} would mean that the object
      *                        is going up by 10 m/s at the start of the simulation
      */
-    public Object(double mass, double dragCoefficient, double size, Vector initialVelocity, Position position) {
+    public Object(double mass, double dragCoefficient, double size, Vector initialVelocity, PositionVector positionVector) {
         setSize(size);
         setMass(mass);
         setDragCoefficient(dragCoefficient);
         setVelocity(initialVelocity);
         setShape(DEFAULT_SHAPE);
-        setPosition(position);
+        setPosition(positionVector);
         makeHitBox();
     }
 
@@ -59,18 +59,18 @@ public class Object {
      *                        on all sides.
      */
     public Object(double mass, double dragCoefficient, double size) {
-        this(mass, dragCoefficient, size, new Vector(DEFAULT_INITIAL_VELOCITY), DEFAULT_POSITION);
+        this(mass, dragCoefficient, size, new Vector(DEFAULT_INITIAL_VELOCITY), DEFAULT_POSITION_VECTOR);
     }
 
-    public Object(double size, Position position) {
-        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, size, new Vector(DEFAULT_INITIAL_VELOCITY), position);
+    public Object(double size, PositionVector positionVector) {
+        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, size, new Vector(DEFAULT_INITIAL_VELOCITY), positionVector);
     }
 
     /**
      * Simple constructor for an object for which there's no AirDrag
      */
     public Object() {
-        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, DEFAULT_SURFACE_AREA, new Vector(DEFAULT_INITIAL_VELOCITY), DEFAULT_POSITION);
+        this(DEFAULT_MASS, DEFAULT_DRAG_COEFFICIENT, DEFAULT_SURFACE_AREA, new Vector(DEFAULT_INITIAL_VELOCITY), DEFAULT_POSITION_VECTOR);
     }
 
     public Shape getShape() {
@@ -81,12 +81,12 @@ public class Object {
         this.shape = shape;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
+    public void setPosition(PositionVector positionVector) {
+        this.positionVector = positionVector;
     }
 
-    public Position getPosition() {
-        return position;
+    public PositionVector getPosition() {
+        return positionVector;
     }
 
     public HitBox getHitBox() {
@@ -105,7 +105,7 @@ public class Object {
     }
 
     public double getHeight() {
-        return this.position.getY();
+        return this.positionVector.getY();
     }
 
     public void setMass(double mass) {
@@ -150,8 +150,8 @@ public class Object {
     }
 
     public void updatePosition(int HZ) {
-        position.incrementX(velocity.getX() / HZ);
-        position.incrementY(velocity.getY() / HZ);
+        positionVector.incrementX(velocity.getX() / HZ);
+        positionVector.incrementY(velocity.getY() / HZ);
     }
 
     /**
@@ -215,7 +215,7 @@ public class Object {
     @Override
     public String toString() {
         return "Object{" +
-                "position=" + position +
+                "position=" + positionVector +
                 ", size=" + size +
                 ", shape=" + shape +
                 '}';

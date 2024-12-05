@@ -1,4 +1,4 @@
-package main;
+package utils;
 
 public class Vector {
     private double x;

@@ -1,14 +1,14 @@
 package main.objectHandling.object;
 
-import main.Position;
+import utils.PositionVector;
 
 /**
  * Not yet implemented
  */
 public class CircleHitBox extends HitBox {
     private double radius;
-    public CircleHitBox(double size, Position position) {
-        super(size, position);
+    public CircleHitBox(double size, PositionVector positionVector) {
+        super(size, positionVector);
         setRadius(getSize()/2);
     }
 
