@@ -33,6 +33,10 @@ public class PositionVector {
         this.y += increment;
     }
 
+    public double[] asDoubleArray() {
+        return new double[]{x,y};
+    }
+
     @Override
     public String toString() {
         return "(" + x + ", " + y + ")";

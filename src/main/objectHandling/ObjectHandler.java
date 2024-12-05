@@ -6,6 +6,7 @@ import main.objectHandling.object.Object;
 import main.objectHandling.object.StaticObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -19,6 +20,7 @@ public class ObjectHandler {
     private int HZ;
     private int simTime;
     public boolean simIsON = false;
+    private PositionVector[][] positionLog;
     private final ArrayList<main.objectHandling.object.Object> fallingObjects = new ArrayList<>();
     private final ArrayList<main.objectHandling.object.StaticObject> staticObjects = new ArrayList<>();
     private final Grid grid = new Grid();
@@ -32,6 +34,7 @@ public class ObjectHandler {
         addFallingObject(fallingObjects);
         setSimTime(simTime);
         setHZ(HZ);
+        positionLog = new PositionVector[HZ*simTime][fallingObjects.length];
     }
 
     public StaticObject[] getStaticObjects() {
@@ -77,22 +80,19 @@ public class ObjectHandler {
         this.simTime = simTime;
     }
 
-//    public void log() {
-//
-//    }
-//
-//    public int[] collectSimulationData() {
-//
-//    }
+    public PositionVector[][] getPositionLog() {
+        return positionLog;
+    }
 
     /**
      * Starts all the calculation necessary for the simulation
-     * Time is calculated in ticks            accelerate(new Vector(0, (-GRAVITATIONAL_CONSTANT) / HZ));. At every tick, a new calculation happens.
+     * Time is calculated in ticks
      * The simulation will stop when the simTime (seconds) is over.
      */
     public void startSimulation() {
         simIsON = true;
         for (int ticks = 0; ticks < this.simTime * this.HZ; ticks++) {
+            positionLog[ticks] = getAllPositions();
             updateObjects(ticks);
         }
         simIsON = false;
@@ -103,15 +103,11 @@ public class ObjectHandler {
      * @return the position of all objects
      */
     public PositionVector[] getAllPositions() {
-        PositionVector[] positionVectors = new PositionVector[this.fallingObjects.size()];
-        for (int i = 0; i < fallingObjects.size(); i++) {
-            positionVectors[i] = fallingObjects.get(i).getPosition();
+        ArrayList<PositionVector> allPositions = new ArrayList<>();
+        for (Object fallingObject : fallingObjects) {
+            allPositions.add(new PositionVector((int) fallingObject.getPosition().getX(), (int) fallingObject.getPosition().getY()));
         }
-        return positionVectors;
-    }
-
-    public Object[] getFallingObjects() {
-        return fallingObjects.toArray(new Object[0]);
+        return allPositions.toArray(new PositionVector[0]);
     }
 
     /**
