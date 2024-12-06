@@ -19,6 +19,21 @@ public class Vector {
         this(xy[0], xy[1]);
     }
 
+    public void reverseX() {
+        x = -x;
+        setDirection();
+    }
+
+    public void reverseY() {
+        y = -y;
+        setDirection();
+    }
+
+    public void reverse() {
+        x = -x;
+        y = -y;
+    }
+
     private void setDirection() {
         if (x == 0) {
             this.direction[0] = Direction.NONE;
@@ -37,7 +52,7 @@ public class Vector {
         }
     }
 
-    private Direction[] getDirection() {
+    public Direction[] getDirection() {
         return direction;
     }
 

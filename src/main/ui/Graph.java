@@ -4,6 +4,7 @@ import utils.PositionVector;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 
 public class Graph extends JPanel {
     public static final int POSITION_X = 300;
@@ -13,6 +14,7 @@ public class Graph extends JPanel {
     public static final int PADDING = 75;
     private PositionVector[][] positionVectors;
     private int simTime;
+    private DecimalFormat format = new DecimalFormat("#.##");
 
     protected enum GraphType {
         PositionTime, HeightTime
@@ -41,22 +43,23 @@ public class Graph extends JPanel {
 
 
         if (positionVectors != null) {
+            int p10 = positionVectors.length / simTime;
+            int deltaX = positionVectors.length / (WIDTH - PADDING * 2);
             // y axis
             for (int i = 0; i <= HEIGHT; i += 100) {
-                g.drawString(String.valueOf((positionVectors[0][0].getY()/2 + i)), 10, (int) (HEIGHT-i));
+                g.drawString(String.valueOf((positionVectors[0][0].getY() / 2 + i)), 10, (int) (HEIGHT - i));
             }
 
+            for (int i = 0; i <= simTime; i++) {
+                g.drawString(format.format((long) i *p10/(positionVectors.length/simTime)), i*((WIDTH-PADDING*2)/(simTime))+PADDING, (HEIGHT - 100));
+            }
 
             for (int i = 0; i < positionVectors.length; i++) {
                 for (int j = 0; j < positionVectors[0].length; j++) {
                     PositionVector current = positionVectors[i][j];
-                    g.fillRect(i * 2 + PADDING, (int) (HEIGHT - current.getY() / 2), 2, 2);
-                    if (i % (simTime) == 0) {
-                        g.drawString(String.valueOf((i / simTime)), i * 2 + PADDING, HEIGHT - 25);
-                    }
+                    g.fillRect(i / deltaX + PADDING, (int) (HEIGHT - current.getY() / 2), 2, 2);
                 }
             }
-            g.drawString(String.valueOf((simTime)), positionVectors.length * 2 + PADDING, HEIGHT - 25);
         }
     }
 }

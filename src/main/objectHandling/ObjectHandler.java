@@ -34,6 +34,7 @@ public class ObjectHandler {
         addFallingObject(fallingObjects);
         setSimTime(simTime);
         setHZ(HZ);
+        addStaticObject(new StaticObject(new PositionVector(Grid.GRID_SIZE_HORIZ/2, 0),Grid.GRID_SIZE_HORIZ));
         positionLog = new PositionVector[HZ*simTime][fallingObjects.length];
     }
 
@@ -138,4 +139,8 @@ public class ObjectHandler {
 
         }
     }
+
+//    public String[] getResults() {
+//        fori
+//    }
 }

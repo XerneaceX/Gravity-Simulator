@@ -29,6 +29,7 @@ public class Grid {
 
     public void removeObject(Object object) {
         int[] gridPos = new int[]{(int) object.getPositionInGrid().getX(), (int) object.getPositionInGrid().getY()};
+        System.out.println(gridPos[0] + " " + gridPos[1]);
         this.grid[gridPos[1]][gridPos[0]].remove(object);
     }
 
@@ -45,6 +46,7 @@ public class Grid {
         PositionVector newPos = new PositionVector(gridPosX, gridPosY);
         if (oldPos.equals(newPos)) return false;
         else object.setPositionInGrid(newPos);
+        if (newPos.getY() <= 0) object.onFloor = true;
         return true;
     }
 
@@ -58,18 +60,20 @@ public class Grid {
         int gridPosX = (int) object.getPositionInGrid().getX();
         for (int i = 0; i < objects.length; i++) {
             for (int j = 0; j < objects[0].length; j++) {
-//                if (!grid[gridPosY+j-1][gridPosX+i-1].contains(object)) {
+                if (gridPosX+i-1 >= 0 && gridPosY+j-1 >= 0) {
                     objects[i][j] = grid[gridPosY+j-1][gridPosX+i-1];
-//                }
+                }
             }
         }
-        objects[1][1].remove(object);
+        if (objects[1][1] != null) objects[1][1].remove(object);
         return objects;
     }
 
     public void moveInGrid(Object object) {
-        removeObject(object);
-        addObject(object);
+        if (object.getPositionInGrid().getY() > 0) {
+            removeObject(object);
+            addObject(object);
+        }
     }
 
     public static Object[] asSimpleArray(ArrayList<Object>[][] objects) {
@@ -83,13 +87,4 @@ public class Grid {
         }
         return simpleArray.toArray(new Object[0]);
     }
-
-//    public static void main(String[] args) {
-//        Grid grid = new Grid();
-//        Object specialObject =  new Object(1, new PositionVector(500,500));
-//        grid.addObject(specialObject);
-//        grid.addObject(new Object());
-//        System.out.println(Arrays.toString(asSimpleArray(grid.getAdjacentObjects(specialObject))));
-//        System.out.println(Arrays.toString(grid.getObjectsAtGridPos(new PositionVector(0, 0))));
-//    }
 }

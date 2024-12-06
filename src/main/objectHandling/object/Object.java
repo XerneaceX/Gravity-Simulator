@@ -21,7 +21,7 @@ public class Object {
     private PositionVector positionVector;
     private PositionVector positionInGrid = new PositionVector(1000, 1000);
 
-    private boolean onFloor = false;
+    public boolean onFloor = false;
     private double dragCoefficient;
     private Vector velocity;
     private long tickDone;
@@ -176,6 +176,8 @@ public class Object {
                 ((0.5 * ObjectHandler.AIR_DENSITY * Math.pow(velocity.getX(), 2) * this.getDragCoefficient() * this.getSize()) / HZ) / this.getMass(),
                 ((0.5 * ObjectHandler.AIR_DENSITY * Math.pow(velocity.getY(), 2) * this.getDragCoefficient() * this.getSize()) / HZ) / this.getMass()
         );
+        if (velocity.getY() > 0) drag.reverseY();
+        if (velocity.getX() > 0) drag.reverseX();
         this.accelerate(drag);
     }
 
