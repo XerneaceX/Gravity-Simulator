@@ -9,7 +9,7 @@ public class Grid {
     private ArrayList<main.objectHandling.object.Object>[][] grid = new ArrayList[GRID_SIZE_VERT][GRID_SIZE_HORIZ];
     public static final int GRID_SIZE_VERT = 2000;
     public static final int GRID_SIZE_HORIZ = 1000;
-    public static final int SQUARE_SIZE = 10;
+    public static final int SQUARE_SIZE = 100;
 
     public Grid() {
         System.out.println("Grid initialized: " + grid.length + "x" + grid[0].length);
@@ -58,12 +58,12 @@ public class Grid {
         int gridPosX = (int) object.getPositionInGrid().getX();
         for (int i = 0; i < objects.length; i++) {
             for (int j = 0; j < objects[0].length; j++) {
-                if (!grid[gridPosY+j-1][gridPosX+i-1].contains(object)) {
+//                if (!grid[gridPosY+j-1][gridPosX+i-1].contains(object)) {
                     objects[i][j] = grid[gridPosY+j-1][gridPosX+i-1];
-                }
+//                }
             }
         }
-
+        objects[1][1].remove(object);
         return objects;
     }
 

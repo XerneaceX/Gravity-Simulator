@@ -15,14 +15,14 @@ import java.util.ArrayList;
 public class Frame extends javax.swing.JFrame implements Runnable, ActionListener {
     JPanel userControls = new JPanel();
     ArrayList<Rectangle> objects = new ArrayList<>();
-    int HZ = 10;
+    int HZ = 1000;
     int simTime = 10; //s
     Graph displayPanel = new Graph(simTime);
     PositionVector[][] positionLog;
 
     public Frame() {
-        ObjectHandler env = new ObjectHandler(new main.objectHandling.object.Object[]{new Object(100, 0.2, 1, new Vector(0, 10), new PositionVector(1500, 1000))}, simTime, HZ);
-        env.addStaticObject(new StaticObject(new PositionVector(1000, 600), 10));
+        ObjectHandler env = new ObjectHandler(new main.objectHandling.object.Object[]{new Object(100, 0.47, 10, new Vector(0, 0), new PositionVector(600, 1000))}, simTime, HZ);
+        env.addStaticObject(new StaticObject(new PositionVector(600, 900), 10));
 
         objects.add(new Rectangle());
 

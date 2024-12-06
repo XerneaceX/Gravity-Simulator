@@ -58,6 +58,5 @@ public class Graph extends JPanel {
             }
             g.drawString(String.valueOf((simTime)), positionVectors.length * 2 + PADDING, HEIGHT - 25);
         }
-
     }
 }

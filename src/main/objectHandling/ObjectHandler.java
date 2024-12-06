@@ -117,7 +117,7 @@ public class ObjectHandler {
         for (Object object : this.fallingObjects) {
             Object[] objectsNear = Grid.asSimpleArray(grid.getAdjacentObjects(object));
             object.doPhysicsTick(this.HZ, objectsNear);
-            if (ticks % HZ == 0) {
+            if (ticks % 5 == 0) {
                 if (grid.updateGridPos(object)) {
                     grid.moveInGrid(object);
                 }

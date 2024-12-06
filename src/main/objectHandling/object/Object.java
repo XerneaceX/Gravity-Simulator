@@ -192,7 +192,7 @@ public class Object {
     }
 
     public void moveAndSlide(int HZ, Object[] objectsNear) {
-        if (!onFloor && tickDone % 10 == 0) {
+        if (tickDone % 10 == 0 && !onFloor) {
             for (Object obj : objectsNear) {
                 if (hitBox.hitBoxCollided(obj.getHitBox())) {
                     doCollision();
